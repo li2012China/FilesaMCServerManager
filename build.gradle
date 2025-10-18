@@ -3,8 +3,8 @@ plugins {
 }
 
 group = 'com.example'
-version = 'r25.10.18-build3'
-description = 'Auto OP Plugin'
+version = 'r25.10.18-build5'
+description = 'FilesaMCServerManager'
 
 sourceCompatibility = 21
 targetCompatibility = 21

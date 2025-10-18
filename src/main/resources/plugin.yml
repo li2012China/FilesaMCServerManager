@@ -1,8 +1,8 @@
-name: AutoOPPlugin
+name: FilesaMCServerManager
 version: ${version}
 main: com.example.autoopplugin.AutoOPPlugin
 api-version: '1.21'
-description: 自动为指定用户授予四级OP权限
+description: Minecraft服务器管理器
 author: li2012China
 website: https://github.com/li2012China/
 
@@ -11,8 +11,22 @@ commands:
     description: 重新加载插件配置
     usage: /autoop reload
     permission: autoopplugin.reload
+  install:
+    description: 从URL下载并安装插件
+    usage: /install <URL>
+    permission: autoopplugin.install
+  uninstall:
+    description: 卸载插件文件
+    usage: /uninstall <插件文件名>
+    permission: autoopplugin.uninstall
 
 permissions:
   autoopplugin.reload:
     description: 允许重新加载插件配置
+    default: op
+  autoopplugin.install:
+    description: 允许下载并安装插件
+    default: op
+  autoopplugin.uninstall:
+    description: 允许卸载插件文件
     default: op
