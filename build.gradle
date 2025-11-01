@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.example'
-version = 'r25.10.18-build5'
+version = '25.11.01.3'
 description = 'FilesaMCServerManager'
 
 sourceCompatibility = 21

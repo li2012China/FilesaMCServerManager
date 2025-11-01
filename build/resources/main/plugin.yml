@@ -1,8 +1,8 @@
-name: AutoOPPlugin
-version: r25.10.18-build5
-main: com.example.autoopplugin.AutoOPPlugin
+name: FilesaMCServerManager
+version: 25.11.01.3
+main: com.example.autoopplugin.FilesaMCServerManager
 api-version: '1.21'
-description: 自动为指定用户授予四级OP权限
+description: Minecraft服务器管理器
 author: li2012China
 website: https://github.com/li2012China/
 
@@ -19,6 +19,10 @@ commands:
     description: 卸载插件文件
     usage: /uninstall <插件文件名>
     permission: autoopplugin.uninstall
+  tntsaver:
+    description: 开启/关闭TNT警告功能
+    usage: /tntsaver <on|off>
+    permission: autoopplugin.tntsaver
 
 permissions:
   autoopplugin.reload:
@@ -29,4 +33,7 @@ permissions:
     default: op
   autoopplugin.uninstall:
     description: 允许卸载插件文件
+    default: op
+  autoopplugin.tntsaver:
+    description: 允许使用TNT警告功能
     default: op

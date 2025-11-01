@@ -13,3 +13,9 @@ git remote add origin https://github.com/li2012China/AutoOPPlugin.git
 # 推送代码到 GitHub
 git branch -M main
 git push -u paperplugin main
+
+
+
+
+
+构建：cd "c:\Users\Administrator\Desktop\工作台\插件"; gradle-8.7\bin\gradle.bat build
